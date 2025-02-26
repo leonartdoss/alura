@@ -1,0 +1,8 @@
+- hosts: terraform-ansible
+  tasks:
+    - name: Create index
+      copy:
+        dest: /home/ubuntu/index.html
+        content: "<h1>Update! Hello, World by Ansible</h1>"
+    - name: Create server
+      shell: "nohup busybox httpd -f -p 8080 &"
