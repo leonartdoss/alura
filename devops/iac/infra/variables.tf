@@ -6,6 +6,14 @@ variable "key" {
     type = string
 }
 
-variable "instance" {
+variable "instance_name" {
+    type = string
+}
+
+variable "instance_type" {
+    type = string
+}
+
+variable "security_group" {
     type = string
 }
