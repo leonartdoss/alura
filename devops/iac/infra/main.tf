@@ -20,10 +20,10 @@ resource "aws_key_pair" "ssh_key" {
 
 resource "aws_instance" "app_server" {
     ami           = "ami-03fd334507439f4d1"
-    instance_type = var.instance
+    instance_type = var.instance_type
     key_name      = var.key
     tags = {
-        Name = "alura_iac_instance"
+        Name = var.instance_name
     }
 }
 
