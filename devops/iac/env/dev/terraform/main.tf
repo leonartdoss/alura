@@ -8,4 +8,5 @@ module "aws_dev" {
     group_name      = "dev"
     min_size        = 0
     max_size        = 1
+    is_prod_env     = false
 }

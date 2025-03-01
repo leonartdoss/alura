@@ -26,7 +26,7 @@ resource "aws_launch_template" "machine" {
         Name = var.instance_name
     }
     security_group_names = [var.security_group]
-    user_data = filebase64("../../../scripts/ansible_main.sh")
+    user_data = var.is_prod_env ? filebase64("../../../scripts/ansible_main.sh") : ""
 }
 
 resource "aws_default_vpc" "default_vpc" {
@@ -38,6 +38,7 @@ resource "aws_lb_target_group" "target_group_lb" {
     port        = "8000"
     protocol    = "HTTP"
     vpc_id      = aws_default_vpc.default_vpc.id
+    count = var.is_prod_env ? 1 : 0
 }
 
 resource "aws_default_subnet" "subnet_1" {
@@ -60,16 +61,18 @@ resource "aws_lb" "load_balancer" {
         aws_default_subnet.subnet_1.id,
         aws_default_subnet.subnet_2.id
     ]
+    count = var.is_prod_env ? 1 : 0
 }
 
 resource "aws_lb_listener" "lb_listener" {
-    load_balancer_arn   = aws_lb.load_balancer.arn
+    load_balancer_arn   = aws_lb.load_balancer[0].arn
     port                = "8000"
     protocol            = "HTTP"
     default_action {
         type                = "forward"
-        target_group_arn    = aws_lb_target_group.target_group_lb.arn
+        target_group_arn    = aws_lb_target_group.target_group_lb[0].arn
     }
+    count = var.is_prod_env ? 1 : 0
 }
 
 resource "aws_autoscaling_group" "scaling_group" {
@@ -81,7 +84,7 @@ resource "aws_autoscaling_group" "scaling_group" {
       id        = aws_launch_template.machine.id
       version   = "$Latest"
     }
-    target_group_arns = [aws_lb_target_group.target_group_lb.arn]
+    target_group_arns = var.is_prod_env ? [aws_lb_target_group.target_group_lb[0].arn] : []
 }
 
 resource "aws_autoscaling_policy" "prod_scaling_policy" {
@@ -94,4 +97,5 @@ resource "aws_autoscaling_policy" "prod_scaling_policy" {
         }
         target_value = 50.0
     }
+    count = var.is_prod_env ? 1 : 0
 }

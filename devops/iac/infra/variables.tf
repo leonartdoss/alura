@@ -1,3 +1,7 @@
+variable "is_prod_env" {
+    type = bool
+}
+
 variable "aws_region" {
     type = string
 }

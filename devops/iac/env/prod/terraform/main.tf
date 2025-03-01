@@ -8,4 +8,5 @@ module "aws_prod" {
     group_name      = "prod"
     min_size        = 1
     max_size        = 10
+    is_prod_env     = true 
 }
