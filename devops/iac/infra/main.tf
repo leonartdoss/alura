@@ -15,7 +15,7 @@ provider "aws" {
 
 resource "aws_key_pair" "ssh_key" {
     key_name   = var.key
-    public_key = file("${var.key}.pub")
+    public_key = file("../.ssh/${var.key}.pub")
 }
 
 resource "aws_instance" "app_server" {
