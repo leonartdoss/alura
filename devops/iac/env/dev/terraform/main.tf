@@ -5,8 +5,7 @@ module "aws_dev" {
     key             = "id_rsa_dev"
     security_group  = "general_access_dev"
     instance_name   = "app_server_dev"
-}
-
-output "ip_dev" {
-    value = module.aws_dev.public_ip
+    group_name      = "dev"
+    min_size        = 0
+    max_size        = 1
 }

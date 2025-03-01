@@ -5,8 +5,7 @@ module "aws_prod" {
     key             = "id_rsa_prod"
     security_group  = "general_access_prod"
     instance_name   = "app_server_prod"
-}
-
-output "ip_dev" {
-    value = module.aws_prod.public_ip
+    group_name      = "prod"
+    min_size        = 1
+    max_size        = 10
 }

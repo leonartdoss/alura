@@ -17,3 +17,15 @@ variable "instance_type" {
 variable "security_group" {
     type = string
 }
+
+variable "group_name" {
+    type = string
+}
+
+variable "min_size" {
+    type = number
+}
+
+variable "max_size" {
+    type = number
+}
