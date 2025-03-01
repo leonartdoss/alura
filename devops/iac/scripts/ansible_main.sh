@@ -1,8 +1,8 @@
 #!/bin/bash
-cd /home/ubuntu
-curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-sudo python3 get-pip.py
-sudo python3 -m pip install ansible
+sudo apt update
+sudo apt install -y software-properties-common
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+sudo apt install -y ansible
 tee -a playbook.yaml > /dev/null <<EOT
 - hosts: localhost
   tasks:
