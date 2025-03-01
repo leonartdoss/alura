@@ -26,7 +26,7 @@ resource "aws_launch_template" "machine" {
         Name = var.instance_name
     }
     security_group_names = [var.security_group]
-    user_data = filebase64("../scripts/ansible_main.sh")
+    user_data = filebase64("../../../scripts/ansible_main.sh")
 }
 
 resource "aws_default_vpc" "default_vpc" {
@@ -34,32 +34,10 @@ resource "aws_default_vpc" "default_vpc" {
 }
 
 resource "aws_lb_target_group" "target_group_lb" {
-    name        = "target_group"
+    name        = "targetgroup"
     port        = "8000"
     protocol    = "HTTP"
     vpc_id      = aws_default_vpc.default_vpc.id
-}
-
-resource "aws_lb_listener" "lb_listener" {
-    load_balancer_arn   = aws_lb.load_balancer.arn
-    port                = "8000"
-    protocol            = "HTTP"
-    default_action {
-        type = "forward"
-        target_group_arn = aws_lb_target_group.target_group_lb.arn
-    }
-}
-
-resource "aws_autoscaling_group" "scaling_group" {
-    availability_zones  = ["${var.aws_region}a", "${var.aws_region}b"]
-    name                = var.group_name
-    min_size            = var.min_size
-    max_size            = var.max_size
-    launch_template {
-      id        = aws_launch_template.machine.id
-      version   = "$Latest"
-    }
-    target_group_arns = [aws_lb_target_group.target_group_lb.arn]
 }
 
 resource "aws_default_subnet" "subnet_1" {
@@ -82,4 +60,38 @@ resource "aws_lb" "load_balancer" {
         aws_default_subnet.subnet_1.id,
         aws_default_subnet.subnet_2.id
     ]
+}
+
+resource "aws_lb_listener" "lb_listener" {
+    load_balancer_arn   = aws_lb.load_balancer.arn
+    port                = "8000"
+    protocol            = "HTTP"
+    default_action {
+        type                = "forward"
+        target_group_arn    = aws_lb_target_group.target_group_lb.arn
+    }
+}
+
+resource "aws_autoscaling_group" "scaling_group" {
+    availability_zones  = ["${var.aws_region}a", "${var.aws_region}b"]
+    name                = var.group_name
+    min_size            = var.min_size
+    max_size            = var.max_size
+    launch_template {
+      id        = aws_launch_template.machine.id
+      version   = "$Latest"
+    }
+    target_group_arns = [aws_lb_target_group.target_group_lb.arn]
+}
+
+resource "aws_autoscaling_policy" "prod_scaling_policy" {
+    name = "terraform-scaling"
+    autoscaling_group_name = var.group_name
+    policy_type = "TargetTrackingScaling"
+    target_tracking_configuration {
+        predefined_metric_specification {
+            predefined_metric_type = "ASGAverageCPUUtilization"
+        }
+        target_value = 50.0
+    }
 }
