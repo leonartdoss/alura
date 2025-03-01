@@ -18,8 +18,8 @@ resource "aws_key_pair" "ssh_key" {
     public_key = file("../.ssh/${var.key}.pub")
 }
 
-resource "aws_instance" "app_server" {
-    ami           = "ami-03fd334507439f4d1"
+resource "aws_launch_template" "machine" {
+    image_id      = "ami-03fd334507439f4d1"
     instance_type = var.instance_type
     key_name      = var.key
     tags = {
