@@ -1,6 +1,5 @@
 resource "aws_security_group" "general_access" {
     name        = var.security_group
-    description = "Group for developers"
     tags        = {
         name = var.security_group
     }
