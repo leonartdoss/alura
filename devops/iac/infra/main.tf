@@ -25,6 +25,8 @@ resource "aws_launch_template" "machine" {
     tags = {
         Name = var.instance_name
     }
+    security_group_names = [var.security_group]
+    user_data = filebase64("../scripts/ansible_main.sh")
 }
 
 output "public_ip" {
