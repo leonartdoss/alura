@@ -45,3 +45,6 @@ terraform.rc
 
 # SSH
 .ssh
+
+# Python
+**/__pycache__/
