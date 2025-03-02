@@ -25,6 +25,12 @@ resource "aws_launch_template" "machine" {
     tags = {
         Name = var.instance_name
     }
+    tag_specifications {
+        resource_type = "instance"
+        tags = {
+            Name = var.instance_name
+        }
+    }
     security_group_names = [var.security_group]
     user_data = var.is_prod_env ? filebase64("../../../scripts/ansible_main.sh") : ""
 }

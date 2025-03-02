@@ -6,7 +6,7 @@ module "aws_dev" {
     security_group  = "general_access_dev"
     instance_name   = "app_server_dev"
     group_name      = "dev"
-    min_size        = 0
-    max_size        = 1
+    min_size        = 1
+    max_size        = 2
     is_prod_env     = false
 }
