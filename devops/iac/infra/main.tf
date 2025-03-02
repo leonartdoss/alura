@@ -1,16 +1,17 @@
-terraform {
-    required_providers {
-        aws = {
-            source  = "hashicorp/aws"
-            version = "~> 4.16"
-        }
-    }
+data "aws_ami" "ubuntu" {
+  most_recent = true
 
-    required_version = ">= 1.2.0"
-}
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
 
-provider "aws" {
-    region  = var.aws_region
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
 }
 
 resource "aws_key_pair" "ssh_key" {
@@ -19,7 +20,7 @@ resource "aws_key_pair" "ssh_key" {
 }
 
 resource "aws_launch_template" "machine" {
-    image_id      = "ami-03fd334507439f4d1"
+    image_id      = data.aws_ami.ubuntu.id
     instance_type = var.instance_type
     key_name      = var.key
     tags = {
